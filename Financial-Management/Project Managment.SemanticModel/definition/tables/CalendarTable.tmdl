@@ -1,0 +1,101 @@
+table CalendarTable
+	lineageTag: 3de6b79d-39dd-474c-9109-f76063f0bd17
+
+	column Date
+		formatString: yyyy-mm-dd
+		lineageTag: ac7f9980-0526-47f2-8dac-1968b326f231
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Year
+		formatString: 0
+		lineageTag: 8276d2e2-9a64-4128-aaad-1bd723a5e402
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number'
+		formatString: 0
+		lineageTag: e2ff0dbc-40cd-47ed-bb81-822844531efa
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Month Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name'
+		lineageTag: 5b0c5a4f-426f-4d4b-bf80-374ec3352956
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day
+		formatString: 0
+		lineageTag: eb91a350-6986-495b-8011-b762db3c6a0d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Day]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weekday
+		formatString: 0
+		lineageTag: 84e10a87-ad06-4dc0-9f7c-3226b6659820
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Weekday]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		formatString: 0
+		lineageTag: 6bcf82e1-482f-4932-943f-87c2f592e5c1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year-Month
+		lineageTag: 842dfe16-1c8f-4394-8ee4-034388b54224
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year-Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year-Quarter
+		lineageTag: 89b80686-a7cc-449a-a9ad-a4be397f3b65
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year-Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CalendarTable = calculated
+		mode: import
+		source =
+				
+				ADDCOLUMNS(
+				    CALENDAR(DATE(2023,3,1),DATE(2023,3,31)),--Min('Table'[start]), MAX('Table'[end])),
+				    "Year", YEAR([Date]),
+				    "Month Number", MONTH([Date]),
+				    "Month Name", FORMAT([Date], "MMMM"),
+				    "Day", DAY([Date]),
+				    "Weekday", WEEKDAY([Date]),
+				    "Quarter", QUARTER([Date]),
+				    "Year-Month", FORMAT([Date], "YYYY-MM"),
+				    "Year-Quarter", FORMAT([Date], "YYYY") & "-Q" & QUARTER([Date])
+				)
+
+	annotation PBI_Id = 1081ff74af91468299a73fbe75960129
+

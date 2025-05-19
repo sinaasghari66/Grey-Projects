@@ -1,0 +1,113 @@
+table _Measure
+	lineageTag: e06b270e-9a2f-4e57-9f70-9da51a3f89bc
+
+	measure 'Progress F' = FORMAT(AVERAGE('Project Managment'[progress]),"0%")
+		lineageTag: 4f97f00f-5bf6-485a-a9a7-390b9d268501
+
+	measure Progress = AVERAGE('Project Managment'[progress])
+		lineageTag: e553cb75-e1b4-4710-92a7-7f736c9bed41
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Color = ```
+			
+			VAR StartDate = 
+			    CALCULATE(MIN('Project Managment'[Start]), REMOVEFILTERS('CalendarTable'))
+			VAR EndDate = 
+			    CALCULATE(MIN('Project Managment'[End]), REMOVEFILTERS('CalendarTable'))
+			VAR Progress = [Progress]  // Progress percentage
+			VAR TotalDays = 
+			    DATEDIFF(StartDate, EndDate, DAY) // Calculate total number of days
+			VAR ProgressDays = 
+			    ROUND(Progress * TotalDays / 100, 0) // Calculate the number of days with progress
+			VAR DayIndex = 
+			    DATEDIFF(StartDate, MIN('CalendarTable'[Date]), DAY) // Calculate the distance in days from the start date
+			VAR DayAfterFinish = 
+			    DATEDIFF(EndDate, MIN('CalendarTable'[Date]), DAY) // Days after project completion
+			
+			VAR Color = 
+			    IF(
+			        DayAfterFinish = 1, 
+			        Progress / 100,
+			        IF(
+			            MIN('CalendarTable'[Date]) >= StartDate && MIN('CalendarTable'[Date]) <= EndDate, 
+			            IF(
+			                [Progress] = 100, 
+			                2,  // Fully completed task
+			                IF(
+			                    DayIndex < ProgressDays,  
+			                    2,  // Progress days
+			                    1.05   // No progress days
+			                )
+			            )
+			        )
+			    )
+			
+			RETURN Color
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 4cb5b6a5-cea7-4651-87f4-1b381b0d49f4
+
+	measure test = DATEDIFF(MIN('Project Managment'[Start]), min('Project Managment'[End]), DAY) +1
+		formatString: 0
+		lineageTag: ea251eb2-51a6-48a2-8011-a3e66f453558
+
+	measure NewColor = ```
+			
+			VAR StartDate = 
+			    CALCULATE(MIN('Project Managment'[Start]), REMOVEFILTERS('CalendarTable'))
+			VAR EndDate = 
+			    CALCULATE(MIN('Project Managment'[End]), REMOVEFILTERS('CalendarTable'))
+			VAR Progress = [Progress]  // Progress percentage
+			VAR TotalDays = 
+			    DATEDIFF(StartDate, EndDate, DAY) // Calculate total number of days
+			VAR ProgressDays = 
+			    ROUND(Progress * TotalDays / 100, 0) // Calculate the number of days with progress
+			VAR DayIndex = 
+			    DATEDIFF(StartDate, MIN('CalendarTable'[Date]), DAY) // Calculate the distance in days from the start date
+			VAR DayAfterFinish = 
+			    DATEDIFF(EndDate, MIN('CalendarTable'[Date]), DAY) // Days after project completion
+			
+			VAR Color = 
+			    IF(
+			        DayAfterFinish = 1, 
+			        Progress / 100,
+			        IF(
+			            MIN('CalendarTable'[Date]) >= StartDate && MIN('CalendarTable'[Date]) <= EndDate, 
+			            IF(
+			                [Progress] = 100, 
+			                2,  // Fully completed task
+			                IF(
+			                    DayIndex < ProgressDays,  
+			                    2,  // Progress days
+			                    1.05   // No progress days
+			                )
+			            )
+			        )
+			    )
+			
+			RETURN Color
+			
+			```
+		lineageTag: e65d4760-6e23-4ef6-8aa3-6c9812052d1e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Column
+		formatString: 0
+		lineageTag: 6c6cb2c2-8189-456c-8856-8af4f743adde
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Column]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measure = calculated
+		mode: import
+		source = Row("Column", BLANK())
+
+	annotation PBI_Id = 021893ce22944f7b9346639018d09cdd
+
+	annotation 436ba87b-9c83-4389-a31b-ebd06a36be98 = {"Expression":""}
+

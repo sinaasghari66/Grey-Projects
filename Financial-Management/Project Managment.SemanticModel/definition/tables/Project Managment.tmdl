@@ -1,0 +1,89 @@
+table 'Project Managment'
+	lineageTag: c8499e3b-0ba2-416e-8e8f-3b38988e03a6
+
+	column Task
+		dataType: string
+		lineageTag: 37ae7097-83d5-48a8-9b0a-d1c04e6da976
+		summarizeBy: none
+		sourceColumn: Task
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subtask
+		dataType: string
+		lineageTag: 38ca5f0f-29b8-467d-a004-9a8dc98415d9
+		summarizeBy: none
+		sourceColumn: Subtask
+		sortByColumn: Row
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 7a72cdac-ac50-4dfb-8251-f27e43f7af59
+		summarizeBy: none
+		sourceColumn: Start
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column End
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 30575abc-9e82-428b-9329-72f6d1bbfaaa
+		summarizeBy: none
+		sourceColumn: End
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column days
+		dataType: int64
+		formatString: 0
+		lineageTag: e433d824-733d-4da9-8ecc-1ca020e9a7a1
+		summarizeBy: sum
+		sourceColumn: days
+
+		annotation SummarizationSetBy = Automatic
+
+	column progress
+		dataType: int64
+		formatString: 0
+		lineageTag: 6410d868-2218-4dee-8e97-f903a316ae9c
+		summarizeBy: sum
+		sourceColumn: progress
+
+		annotation SummarizationSetBy = Automatic
+
+	column Row
+		dataType: int64
+		formatString: 0
+		lineageTag: a4434d8b-955e-4cc2-a18e-344dee8f662a
+		summarizeBy: sum
+		sourceColumn: Row
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Project Managment' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("dZNBb6MwEIX/isW5lbAhkN6bQ7StFKVd7SHbgzdMAypgapvspr++HiBhMKzEIB7gj3lvzOEQ8OAu2NaFLaQtVO3EHj7bQgNUUFvDTtLmoIv65J6IUET3oTs4FZETWKsweLs7BMLnvVj5AXmuygw0+6v0h8lVQwErKhIUrtJVR4vmNKUv7I+SOvOaohiOiDVW31TsY0bBjqpqSrBAl0e+QMc87GH4oUcwxQlBG7FhmbSSGVW2HS+7Prp1llIarn7AyHqDCYX9crm/a1mB8b3cBL6/Go2ldPlOK6vspZkGMzEjRGfEneIesKaA/mIpESFmEFc9At1scQXumGvAm9cnGsEDbQgF7xLtM+j6mREeMdVKZVCWniE6aYGcdPTTcWesZ5Cm1WDY7zYMRcJ+7Lbmf0SeTjd0l/9id+fii3YSUoGAmFiMliA70O9KV7I+ArNg7NTnMlAMXcVLwOmNxUHGvhgHyfud3ZTqggwnfhr3z1oti9prLZohXSWD18TH7N2uBpMzc8wha0u4jkGWoC0dhEh9wckgUp+7+QdH99OdgTWOT3K4IdZERHyIcMCtfdwolpKLuC+G5N6+AQ==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Row = _t, task = _t, subtask = _t, start = _t, end = _t, days = _t, progress = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Row", Int64.Type}, {"task", type text}, {"subtask", type text}, {"start", type date}, {"end", type date}, {"days", Int64.Type}, {"progress", Int64.Type}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"task", "Task"}, {"subtask", "Subtask"}, {"start", "Start"}, {"end", "End"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
